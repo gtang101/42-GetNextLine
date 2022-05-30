@@ -6,7 +6,7 @@
 /*   By: ktang <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/09 13:07:11 by ktang             #+#    #+#             */
-/*   Updated: 2022/05/20 20:03:04 by ktang            ###   ########.fr       */
+/*   Updated: 2022/05/30 21:33:19 by ktang            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,33 +65,16 @@ int	ft_get_eol(const char *str)
 	return (0);
 }
 
-char	*getline_gonext(char **str)
+char	*ft_get_line(char *str)
 {
-	int		i;
-	int		j;
 	char	*line;
-	char	*store;
+	int		i;
 
-	i = ft_get_eol(*str);
-	if (i == 0)
-		i = ft_strlen(*str);
+	if (!str)
+		return (NULL);
+	i = ft_get_eol(str);
 	line = malloc(i + 1);
-	line[i] = '\0';
-	while (i-- > 0)
-		line[i] = (*str)[i];
-	store = NULL;
-	i = ft_strlen(*str) - ft_get_eol(*str);
-	if (i != ft_strlen(*str) && i > 0)
-	{
-		store = malloc(i + 1);
-		store[i++] = '\0';
-		j = ft_strlen(*str);
-		while (i-- > 0)
-			store[i] = (*str)[j--];
-	}
-	free(*str);
-	*str = store;
-	return (line);
+	
 }
 
 char	*get_next_line(int fd)
@@ -114,5 +97,5 @@ char	*get_next_line(int fd)
 	free(buffer);
 	if (!storage[fd])
 		return (NULL);
-	return (getline_gonext(&storage[fd]));
+	return (ft_get_line(&storage[fd]));
 }
