@@ -1,49 +1,37 @@
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
+#include "get_next_line.h"
 
-int	ft_strlen(char *str)
+int	main(void)
 {
-	int	i;
-
-	i = 0;
-	if (!str)
-		return (0);
-	while (str[i])
-		i++;
-	return (i);
-}
-
-char	*ft_strjoin(char *s1, char *s2)
-{
-	char	*newstr;
+	char	*line;
+	char	*line2;
 	int		i;
-	int		j;
+	int		fd1;
+	int		fd2;
 
+	fd1 = open("test.txt", O_RDONLY);
 	i = 0;
-	j = 0;
-	newstr = malloc(ft_strlen(s1) + ft_strlen(s2) + 1);
-	if (!newstr)
-		return (0);
-	while (s1[i] != '\0')
+	fd2 = open("test2.txt", O_RDONLY);
+	printf("\n\nstarting\n\n");
+	printf("\n\n%i\n\n", fd1);
+	printf("\n\n%i\n\n", fd2);
+	while (1)
 	{
-		newstr[i] = s1[i];
+		line = get_next_line(fd1);
+		if (line)
+		{	
+			printf("line [%02d]: %s\n", i, line);
+		}
+		line2 = get_next_line(fd2);
+		if (line2)
+		{
+			printf("line [%02d]: %s\n", i, line2);
+		}
+		if (!line && !line2)
+			break ;
+		free(line);
+		free(line2);
 		i++;
 	}
-	while (s2[j] != '\0')
-	{
-		newstr[i + j] = s2[j];
-		j++;
-	}
-	newstr[i + j] = '\0';
-	return (newstr);
-}
-
-int	main()
-{
-	char	*str2;
-	char	*str1 = "efgh";
-
-	printf("Result: %s\n", ft_strjoin(str1, str2));
+	close(fd1);
 	return (0);
 }

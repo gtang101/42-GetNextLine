@@ -6,7 +6,7 @@
 /*   By: ktang <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/09 13:07:11 by ktang             #+#    #+#             */
-/*   Updated: 2022/05/30 21:33:19 by ktang            ###   ########.fr       */
+/*   Updated: 2022/06/03 19:06:27 by ktang            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,16 +65,33 @@ int	ft_get_eol(const char *str)
 	return (0);
 }
 
-char	*ft_get_line(char *str)
+char	*ft_get_line(char **str)
 {
 	char	*line;
+	char	*next;
 	int		i;
+	int		j;
 
-	if (!str)
-		return (NULL);
-	i = ft_get_eol(str);
+	i = ft_get_eol(*str);
+	if (i == 0)
+		i = ft_strlen(*str);
 	line = malloc(i + 1);
-	
+	line[i] = '\0';
+	while (i-- > 0)
+		line[i] = *str[i];
+	next = NULL;
+	i = ft_strlen(*str) - ft_get_eol(*str);
+	if (i != ft_strlen(*str) && i > 0)
+	{
+		next = malloc(i + 1);
+		next[i++] = '\0';
+		j = ft_strlen(*str);
+		while (i-- > 0)
+			next[i] = *str[j--];
+	}
+	free(*str);
+	*str = next;
+	return (line);
 }
 
 char	*get_next_line(int fd)
