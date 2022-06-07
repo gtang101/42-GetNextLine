@@ -35,7 +35,7 @@ char	*ft_strjoin(char *s1, char *s2)
 	newstr = malloc(ft_strlen(s1) + ft_strlen(s2) + 1);
 	if (!newstr)
 		return (0);
-	while (s1[i] != '\0')
+	while (s1 && s1[i] != '\0')
 	{
 		newstr[i] = s1[i];
 		i++;
@@ -65,20 +65,30 @@ int	ft_get_eol(const char *str)
 	return (0);
 }
 
-char	*ft_get_line(char **str)
+char	*ft_get_line(char **str, int nl_pos)
 {
 	char	*line;
+	int		i;
+
+	if (nl_pos == 0)
+		nl_pos = ft_strlen(*str);
+	line = malloc(nl_pos + 1);
+	line[nl_pos] = '\0';
+	i = 0;
+	while (i < nl_pos)
+	{
+		line[i] = str[0][i];
+		i++;
+	}
+	return (line);
+}
+
+char	*ft_next_line(char **str)
+{
 	char	*next;
 	int		i;
 	int		j;
 
-	i = ft_get_eol(*str);
-	if (i == 0)
-		i = ft_strlen(*str);
-	line = malloc(i + 1);
-	line[i] = '\0';
-	while (i-- > 0)
-		line[i] = *str[i];
 	next = NULL;
 	i = ft_strlen(*str) - ft_get_eol(*str);
 	if (i != ft_strlen(*str) && i > 0)
@@ -87,20 +97,24 @@ char	*ft_get_line(char **str)
 		next[i++] = '\0';
 		j = ft_strlen(*str);
 		while (i-- > 0)
-			next[i] = *str[j--];
+		{
+			next[i] = str[0][j];
+			j--;
+		}		
 	}
 	free(*str);
 	*str = next;
-	return (line);
+	return (next);
 }
 
 char	*get_next_line(int fd)
 {
 	char		*buffer;
-	static char	*storage[OPEN_MAX];
+	static char	*storage[FOPEN_MAX];
+	char		*line;
 	int			byte_read;
 
-	if (BUFFER_SIZE < 1 || fd < 0 || fd > OPEN_MAX)
+	if (BUFFER_SIZE < 1 || fd < 0 || fd > FOPEN_MAX)
 		return (NULL);
 	buffer = malloc(BUFFER_SIZE + 1);
 	while (!ft_get_eol(&storage[fd][0]))
@@ -114,5 +128,7 @@ char	*get_next_line(int fd)
 	free(buffer);
 	if (!storage[fd])
 		return (NULL);
-	return (ft_get_line(&storage[fd]));
+	line = ft_get_line(&storage[fd], ft_get_eol(storage[fd]));
+	storage[fd] = ft_next_line(&storage[fd]);
+	return (line);
 }
